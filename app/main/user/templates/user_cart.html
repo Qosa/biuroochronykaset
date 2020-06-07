@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% from "bootstrap/pagination.html" import render_pagination %}
+{% block mycontent %}
+    <!-- Tab panes -->
+    <h1>Koszyk</h1>
+    <div class="tab-content">
+        {% if request.args.get('show',0)!='1' %}
+            <table class="table table-striped table-hover">
+                <thead class="hidden-xs">
+                <tr>
+                    <th>ID</th>
+                    <th>Tytuł</th>
+                    <th>Typ</th>
+                    <th>Cena</th>
+                    <th>Operacje</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for cart_elem in cart %}
+                        <td class="hidden-xs">{{ cart_elem.id }}</td>
+                        <td class="hidden-xs">{{ cart_elem.name }}</td>
+                        <td class="hidden-xs">{{ cart_elem.platform }}</td>
+                        <td class="hidden-xs">{{ cart_elem.price }}</td>
+                        <td class="hidden-xs"><a class="btn btn-danger"
+                                   href="">Usuń</a></td>
+                        {%- if current_user.is_authenticated -%}
+
+                        {%- endif -%}
+                        </td>
+                    </tr>
+
+
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <table class="table table-striped table-hover">
+                <thead class="hidden-xs">
+                <tr>
+                    <th>Użytkownik</th>
+                    <th>Email</th>
+                    <th>Wypozyczenia</th>
+                    <th>Data wypożyczenia</th>
+                    <th>Data zwrotu</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for cart_elem in cart %}
+                    <tr class="animated fadeIn delay-{{ loop.index0 }}">
+                        <td>
+                            <p class="visible-xs-block">ID: <span
+                                class="line-wrap">{{ cart_elem.id }}</span>
+                            </p>
+                            <p class="visible-xs-block">Tytuł: <span
+                                class="line-wrap">{{ cart_elem.name }}</span>
+                            </p>
+                            <p class="visible-xs-block">Cena: <span
+                                    class="line-wrap">{{ cart_elem.price }}</span>
+                            </p>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        {% endif %}
+    {% if pagination and pagination.pages > 1 %}
+        <div class="container-fluid text-center">
+            {{ render_pagination(pagination) }}
+        </div>
+    {% endif %}
+    
+        <div class="container">
+            <div class="row">
+              <div class="col-sm-7">
+              </div>
+              <div class="col-sm-1">
+                <h3>Suma: </h3>
+              </div>
+              <div class="col-sm-2">
+                <h3>{{ total }} PLN</h3>
+              </div>
+              <div class="col-sm-2">
+                <a class="btn btn-success"
+                href="" style="margin-top: 15px;">Wypożycz</a>
+              </div>
+            </div>
+          </div>
+{% endblock %}

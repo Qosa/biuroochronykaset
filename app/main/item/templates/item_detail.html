@@ -1,0 +1,253 @@
+{%- extends "base.html" -%}
+{%- from "bootstrap/pagination.html" import render_pagination -%}
+{%- import "bootstrap/wtf.html" as wtf -%}
+{%- block mycontent -%}
+    <div class="well well-lg">
+
+        <h1 class="page-header animated fadeInLeft">{{ item.title }}</h1>
+        <div class="primary-info">
+            {%- if item.image -%}
+                <img class="img-responsive" src="{{ item.image }}" alt="{{ item.title }}">
+            {%- endif -%}
+            <ul class="list-group">
+                {%- if item.itemType -%}
+                    <li class="list-group-item">Typ: {{ item.itemType }}</li>
+                {%- endif -%}
+                {%- if item.platform -%}
+                    <li class="list-group-item">Nośnik: {{ item.platform }}</li>
+                {%- endif -%}
+                {%- if item.author -%}
+                    <li class="list-group-item">Autor: {{ item.author }}</li>
+                {%- endif -%}
+                {%- if item.publisher -%}
+                    <li class="list-group-item">Wydawca: {{ item.publisher }}</li>
+                {%- endif -%}
+                {%- if item.pubdate -%}
+                    <li class="list-group-item">Data wydania: {{ item.pubdate }}</li>
+                {%- endif -%}
+                {%- if item.price -%}
+                    <li class="list-group-item">Cena: {{ item.price }}</li>
+                {%- endif -%}
+                <li class="list-group-item">Dostępność: {{ item.amount }} / {{ item.can_borrow_number() }}</li>
+            </ul>
+        </div>
+        <br>
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#summary"
+                           aria-expanded="true" aria-controls="collapseOne">
+                            Opis
+                        </a>
+                    </h4>
+                </div>
+                <div id="summary" class="panel-collapse collapse in" role="tabpanel"
+                     aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        {%- if item.summary_html -%}
+                            {{ item.summary_html|safe }}
+                        {%- else -%}
+                            {{ item.summary }}
+                        {%- endif -%}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            {%- if current_user.is_authenticated -%}
+                {%- with  log=current_user.borrowing(item) -%}
+                    {%- if log -%}
+                        <a class="btn btn-primary"
+                           href="{{ url_for('log.item_return',log_id=log.id,next=request.full_path ) }}">
+                            Wypożycz
+                        </a>
+                    {%- else -%}
+                        <a class="btn btn-success"
+                           href="{{ url_for('log.item_borrow',item_id=item.id,next=request.full_path) }}"
+                           {%- if not item.can_borrow() -%}disabled="disabled"{%- endif -%}>
+                            Zwróć
+                        </a>
+                    {%- endif -%}
+                {%- endwith -%}
+            {%- endif -%}
+            {%- if current_user.can(Permission.UPDATE_ITEM_INFORMATION) -%}
+                <a type="button" class="btn btn-warning" href="{{ url_for('item.edit',item_id=item.id) }}">Edytuj
+                </a>
+            {%- endif -%}
+
+            {%- if item.hidden -%}
+                {%- if current_user.is_administrator() -%}
+                    <a type="button" class="btn btn-info"
+                       href="{{ url_for('item.put_back',item_id=item.id) }}">Ukryj</a>
+                {%- endif -%}
+            {%- else -%}
+                {%- if current_user.can(Permission.DELETE_ITEM) -%}
+                    <a type="button" class="btn btn-danger"
+                       href="{{ url_for('item.delete',item_id=item.id) }}">Usuń</a>
+                {%- endif -%}
+            {%- endif -%}
+        </div>
+    </div>
+    <div class="well well-lg">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist" id="log">
+            {%- with tabindex= request.args.get('show') or '0' -%}
+                <li role="presentation" {%- if tabindex=='0' -%}class="active"{%- endif -%}><a
+                        href="{%- if tabindex=='0' -%}#log{%- else -%}{{ url_for('item.detail',item_id=item.id,show=0,_anchor='log') }}{%- endif -%}"
+                        role="tab">Recenzje</a></li>
+                <li role="presentation" {%- if tabindex=='1' -%}class="active"{%- endif -%}><a
+                        href="{%- if tabindex=='1' -%}#log{%- else -%}{{ url_for('item.detail',item_id=item.id,show=1,_anchor='log') }}{%- endif -%}"
+                        role="tab">Aktualne wypożyczenia</a></li>
+                <li role="presentation" {%- if tabindex=='2' -%}class="active"{%- endif -%}><a
+                        href="{%- if tabindex=='2' -%}#log{%- else -%}{{ url_for('item.detail',item_id=item.id,show=2,_anchor='log') }}{%- endif -%}"
+                        role="tab">Historia wypożyczeń</a></li>
+            {%- endwith -%}
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+
+            {%- if (request.args.get('show') or '0')=='0' -%}
+
+                <ul class="list-group">
+                    {%- if current_user.is_authenticated -%}
+                        <li class="list-group-item list-group-item">
+                            <div class="row">
+                                <div class="col-md-4 col-md-offset-4">
+                                    <button type="button" class="btn btn-primary btn-block" data-toggle="modal"
+                                            data-target="#myModal">
+                                        Oceń pozycję
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+                    {%- endif -%}
+                    {%- for comment in data -%}
+                        <li class="list-group-item clearfix">
+                            <div class="media">
+                                {%- if comment.user.avatar_url() -%}
+                                    <div class="media-left">
+                                        <a href="{{ url_for('user.detail',user_id=comment.user.id) }}">
+                                            <div class="media-object avatar avatar-small"
+                                                 style="background-image: url({{ comment.user.avatar_url() }})"></div>
+                                        </a>
+                                    </div>
+                                {%- endif -%}
+                                <div class="media-body">
+                                    <p class="media-heading"><a
+                                            href="{{ url_for('user.detail',user_id=comment.user.id) }}">
+                                        {{ comment.user.name }}</a>
+                                        <small>{{ comment.user.headline or "" }}</small>
+                                    </p>
+                                    <p class="list-group-item-text">{{ comment.comment }}</p>
+                                    {%- if comment.create_timestamp==comment.edit_timestamp -%}
+                                        <h4>
+                                            <small>
+                                                Przesłany: {{ comment.create_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</small>
+                                        </h4>
+                                    {%- else -%}
+                                        <h4>
+                                            <small>
+                                                Edytowano: {{ comment.edit_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</small>
+                                        </h4>
+                                    {%- endif -%}
+
+                                    {%- if comment.user_id == current_user.id or current_user.can(Permission.DELETE_OTHERS_COMMENT) -%}
+                                        <a class="pull-right btn btn-danger btn-sm"
+                                           href="{{ url_for('comment.delete',comment_id=comment.id,next=request.url) }}">Usuń</a>
+                                    {%- endif -%}
+                                </div>
+                            </div>
+                        </li>
+                    {%- endfor -%}
+                </ul>
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">{{ current_user.name~'-Recenzja '~item.title }}</h4>
+                            </div>
+                            <form action="{{ url_for('comment.add',item_id=item.id) }}" method="post" class="form"
+                                  role="form">
+                                {{ form.hidden_tag() }}
+                                <div class="modal-body">
+                                    {{ wtf.form_field(form.comment) }}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj
+                                    </button>
+                                    {{ wtf.form_field(form.submit,button_map={'submit':'success'}) }}
+                            </form>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+
+            {%- elif request.args.get('show')=='1' -%}
+                {%- if data -%}
+                    <table class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>Użytkownik</th>
+                            <th class="hidden-xs">E-mail</th>
+                            <th>Data wypożyczenia</th>
+                            <th>Przewidywana data zwrotu</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {%- for log in data -%}
+                            <tr>
+                                <td>
+                                    <a href="{{ url_for('user.detail' ,user_id=log.user.id) }}">{{ log.user.name }}</a>
+                                </td>
+                                <td class="hidden-xs">{{ log.user.email }}</td>
+                                </td>
+                                <td>{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                                <td>{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                            </tr>
+                        {%- endfor -%}
+                        </tbody>
+                    </table>
+                {%- else -%}
+                    <div class="container-fluid">Brak danych do wyświetlenia.</div>
+                {%- endif -%}
+            {%- else -%}
+                {%- if data -%}
+                    <table class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>Użytkownik</th>
+                            <th class="hidden-xs">E-mail</th>
+                            <th>Data wypożyczenia</th>
+                            <th>Data zwrotu</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {%- for log in data -%}
+                            <tr>
+                                <td>
+                                    <a href="{{ url_for('user.detail' ,user_id=log.user.id) }}">{{ log.user.name }}</a>
+                                </td>
+                                <td class="hidden-xs">{{ log.user.email }}</td>
+                                </td>
+                                <td>{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                                <td>{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                            </tr>
+                        {%- endfor -%}
+                        </tbody>
+                    </table>
+                {%- else -%}
+                    <div class="container-fluid">Brak danych do wyświetlenia.</div>
+                {%- endif -%}
+
+            {%- endif -%}
+        </div>
+
+        {%- if pagination and pagination.pages > 1 -%}
+            <div class="container-fluid text-center">
+                {{ render_pagination(pagination,args={'_anchor':'log'}) }}
+            </div>
+        {%- endif -%}
+{%- endblock -%}
