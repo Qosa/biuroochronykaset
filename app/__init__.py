@@ -23,5 +23,3 @@ for blueprint in [main, auth, user, item, comment, log]:
 from app import models
 
 exists_db = os.path.isfile(app.config['DATABASE'])
-if not exists_db:
-    from . import db_fill
