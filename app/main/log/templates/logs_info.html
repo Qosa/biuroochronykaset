@@ -34,7 +34,7 @@
                             <a class="visible-xs-block"
                                href="{{ url_for('item.detail',item_id=log.item.id) }}">{{ log.item.title }}</a>
                             <p class="visible-xs-block">Data wypożyczenia: <span
-                                    class="line-wrap">{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
+                                    class="line-wrap">{{ log.borrow_timestamp }}</span>
                             </p>
                             <p class="visible-xs-block">Przewidywana data zwrotu: <span
                                     class="line-wrap">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
@@ -49,7 +49,7 @@
                         <td class="hidden-xs">{{ log.user.email }}</td>
                         <td class="hidden-xs"><a
                                 href="{{ url_for('item.detail',item_id=log.item.id) }}">{{ log.item.title }}</a></td>
-                        <td class="hidden-xs">{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                        <td class="hidden-xs">{{ log.borrow_timestamp }}</td>
                         <td class="hidden-xs">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
                         {%- if current_user.is_authenticated -%}
                             <td class="hidden-xs">
@@ -87,7 +87,7 @@
                             <a class="visible-xs-block"
                                href="{{ url_for('item.detail',item_id=log.item.id) }}">{{ log.item.title }}</a>
                             <p class="visible-xs-block">Data wypożyczenia: <span
-                                    class="line-wrap">{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
+                                    class="line-wrap">{{ log.borrow_timestamp }}</span>
                             </p>
                             <p class="visible-xs-block">Data zwrotu: <span
                                     class="line-wrap">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
@@ -96,7 +96,7 @@
                         <td class="hidden-xs">{{ log.user.email }}</td>
                         <td class="hidden-xs"><a
                                 href="{{ url_for('item.detail',item_id=log.item.id) }}">{{ log.item.title }}</a></td>
-                        <td class="hidden-xs">{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                        <td class="hidden-xs">{{ log.borrow_timestamp }}</td>
                         <td class="hidden-xs">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
 
                     </tr>

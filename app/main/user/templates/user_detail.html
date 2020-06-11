@@ -84,13 +84,13 @@
                             <tr class="animated fadeIn delay-{{ loop.index0 }}">
                                 <td><a href="{{ url_for('item.detail',item_id=log.item.id) }}">{{ log.item.title }}</a>
                                     <p class="visible-xs-block">Data wypożyczenia:<span
-                                            class="line-wrap">{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
+                                            class="line-wrap">{{ log.borrow_timestamp }}</span>
                                     </p>
                                     <p class="visible-xs-block">Data zwrotu:<span
                                             class="line-wrap">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
                                     </p>
                                 </td>
-                                <td class="hidden-xs">{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                                <td class="hidden-xs">{{ log.borrow_timestamp }}</td>
                                 <td class="hidden-xs">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
                                 {%- if current_user.is_authenticated and current_user.id==user.id -%}
                                     <td><a class="btn btn-primary"
@@ -120,14 +120,14 @@
                                 <td><a href="{{ url_for('item.detail',item_id=log.item.id) }}">{{ log.item.title }}</a>
                                     <p class="visible-xs-block">
                                         Data wypożyczenia:<span
-                                            class="line-wrap">{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
+                                            class="line-wrap">{{ log.borrow_timestamp }}</span>
                                     </p>
                                     <p class="visible-xs-block">
                                         Data zwrotu:<span
                                             class="line-wrap">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
                                     </p>
                                 </td>
-                                <td class="hidden-xs">{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                                <td class="hidden-xs">{{ log.borrow_timestamp }}</td>
                                 <td class="hidden-xs">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
                             </tr>
                         {% endfor %}
