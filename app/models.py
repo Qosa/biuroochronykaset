@@ -175,7 +175,7 @@ class Role(db.Model):
 class Item(db.Model):
     __tablename__ = 'items'
     id = db.Column(db.Integer, primary_key=True)
-    itemType = db.Column(db.String(128))
+    itemtype = db.Column(db.String(128))
     platform = db.Column(db.String(128))
     title = db.Column(db.String(128))
     author = db.Column(db.String(128))

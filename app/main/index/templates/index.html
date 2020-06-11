@@ -59,12 +59,12 @@
                                 {% if comment.create_timestamp==comment.edit_timestamp %}
                                     <span class="pull-right">
                                         <small>
-                                            Przesłany: {{ comment.create_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</small>
+                                            Przesłany: {{ comment.create_timestamp }}</small>
                                     </span>
                                 {% else %}
                                     <span class="pull-right">
                                         <small>
-                                            Edytowany: {{ comment.edit_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</small>
+                                            Edytowany: {{ comment.edit_timestamp }}</small>
                                     </span>
                                 {% endif %}
                             </p>

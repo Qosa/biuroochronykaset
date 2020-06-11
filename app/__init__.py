@@ -21,5 +21,5 @@ for blueprint in [main, auth, user, item, comment, log]:
     app.register_blueprint(blueprint)
 
 from app import models
-
-exists_db = os.path.isfile(app.config['DATABASE'])
+db.init_app(app)
+#exists_db = os.path.isfile(app.config['DATABASE'])
