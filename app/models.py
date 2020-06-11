@@ -185,7 +185,7 @@ class Item(db.Model):
     price = db.Column(db.String(16))
     summary = db.deferred(db.Column(db.Text, default=""))
     summary_html = db.deferred(db.Column(db.Text))
-    hidden = db.Column(db.Boolean, default=0)
+    hidden = db.Column(db.Integer, default=0)
     amount = db.Column(db.Integer)
 
     logs = db.relationship('Log',
@@ -302,7 +302,7 @@ class Comment(db.Model):
     comment = db.Column(db.String(1024))
     create_timestamp = db.Column(db.DateTime, default=datetime.now())
     edit_timestamp = db.Column(db.DateTime, default=datetime.now())
-    deleted = db.Column(db.Boolean, default=0)
+    deleted = db.Column(db.Integer, default=0)
 
     def __init__(self, item, user, comment):
         self.user = user
