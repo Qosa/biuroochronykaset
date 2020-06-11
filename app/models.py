@@ -247,7 +247,7 @@ class Log(db.Model):
     item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
     borrow_timestamp = db.Column(db.DateTime, default=datetime.now())
     return_timestamp = db.Column(db.DateTime, default=datetime.now())
-    returned = db.Column(db.Boolean, default=0)
+    returned = db.Column(db.Integer, default=0)
 
     def __init__(self, user, item):
         self.user = user
