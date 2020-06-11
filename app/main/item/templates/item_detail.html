@@ -139,12 +139,12 @@
                                     {%- if comment.create_timestamp==comment.edit_timestamp -%}
                                         <h4>
                                             <small>
-                                                Przesłany: {{ comment.create_timestamp('%d %B %Y - %H:%M:%S') }}</small>
+                                                Przesłany: {{ comment.create_timestamp }}</small>
                                         </h4>
                                     {%- else -%}
                                         <h4>
                                             <small>
-                                                Edytowano: {{ comment.edit_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</small>
+                                                Edytowano: {{ comment.edit_timestamp }}</small>
                                         </h4>
                                     {%- endif -%}
 
