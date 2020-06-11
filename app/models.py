@@ -41,7 +41,7 @@ class User(UserMixin, db.Model):
             if self.email.lower() == current_app.config['FLASKY_ADMIN'].lower():
                 self.role = Role.query.filter_by(permissions=0x1ff).first()
             if self.role is None:
-                self.role = Role.query.filter_by(default=True).first()
+                self.role = Role.query.filter_by(rdefault=True).first()
         self.member_since = datetime.now()
 
     def can(self, permissions):
