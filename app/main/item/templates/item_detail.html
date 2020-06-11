@@ -200,7 +200,7 @@
                                 <td class="hidden-xs">{{ log.user.email }}</td>
                                 </td>
                                 <td>{{ log.borrow_timestamp }}</td>
-                                <td>{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                                <td>{{ log.return_timestamp }}</td>
                             </tr>
                         {%- endfor -%}
                         </tbody>
@@ -228,7 +228,7 @@
                                 <td class="hidden-xs">{{ log.user.email }}</td>
                                 </td>
                                 <td>{{ log.borrow_timestamp }}</td>
-                                <td>{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                                <td>{{ log.return_timestamp }}</td>
                             </tr>
                         {%- endfor -%}
                         </tbody>

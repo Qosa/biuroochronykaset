@@ -37,7 +37,7 @@
                                     class="line-wrap">{{ log.borrow_timestamp }}</span>
                             </p>
                             <p class="visible-xs-block">Przewidywana data zwrotu: <span
-                                    class="line-wrap">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
+                                    class="line-wrap">{{ log.return_timestamp }}</span>
                             </p>
                             {%- if current_user.is_administrator() -%}
                                     <a class="btn btn-primary visible-xs-block"
@@ -50,7 +50,7 @@
                         <td class="hidden-xs"><a
                                 href="{{ url_for('item.detail',item_id=log.item.id) }}">{{ log.item.title }}</a></td>
                         <td class="hidden-xs">{{ log.borrow_timestamp }}</td>
-                        <td class="hidden-xs">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                        <td class="hidden-xs">{{ log.return_timestamp }}</td>
                         {%- if current_user.is_authenticated -%}
                             <td class="hidden-xs">
                             {% if current_user.id == log.user.id or current_user.is_administrator() %}
@@ -90,14 +90,14 @@
                                     class="line-wrap">{{ log.borrow_timestamp }}</span>
                             </p>
                             <p class="visible-xs-block">Data zwrotu: <span
-                                    class="line-wrap">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
+                                    class="line-wrap">{{ log.return_timestamp }}</span>
                             </p>
                         </td>
                         <td class="hidden-xs">{{ log.user.email }}</td>
                         <td class="hidden-xs"><a
                                 href="{{ url_for('item.detail',item_id=log.item.id) }}">{{ log.item.title }}</a></td>
                         <td class="hidden-xs">{{ log.borrow_timestamp }}</td>
-                        <td class="hidden-xs">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                        <td class="hidden-xs">{{ log.return_timestamp }}</td>
 
                     </tr>
                 {% endfor %}
