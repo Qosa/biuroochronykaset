@@ -27,9 +27,9 @@
         {% for item in items %}
             <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
                 <td><a href="{{ url_for('item.detail',item_id=item.id) }}">{{ item.title }}</a>
-                    <p class="visible-xs-block">{{ item.itemType }}</p>
+                    <p class="visible-xs-block">{{ item.itemtype }}</p>
                     <p class="visible-xs-block">{{ "Dostępność: "~ item.amount }} / {{ item.can_borrow_number() }}</p></td>
-                <td class="hidden-xs">{{ item.itemType }}</td>
+                <td class="hidden-xs">{{ item.itemtype }}</td>
                 <td class="hidden-xs">{{ item.platform }}</td>
                 <td class="hidden-xs">{{ item.amount }} / {{ item.can_borrow_number() }}</td>
                 <td class="hidden-xs">{{ item.logs.count() }}</td>

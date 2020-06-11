@@ -22,7 +22,7 @@ def index():
     if search_word:
         search_word = search_word.strip()
         the_items = the_items.filter(db.or_(
-            Item.title.ilike(u"%%%s%%" % search_word), Item.author.ilike(u"%%%s%%" % search_word), Item.itemType.ilike(
+            Item.title.ilike(u"%%%s%%" % search_word), Item.author.ilike(u"%%%s%%" % search_word), Item.itemtype.ilike(
                 u"%%%s%%" % search_word), Item.platform.ilike(u"%%%s%%" % search_word)))
         search_form.search.data = search_word
     else:
@@ -63,7 +63,7 @@ def edit(item_id):
     item = Item.query.get_or_404(item_id)
     form = EditItemForm()
     if form.validate_on_submit():
-        item.itemType = form.itemType.data
+        item.itemtype = form.itemtype.data
         item.platform = form.platform.data
         item.title = form.title.data
         item.author = form.author.data
@@ -77,7 +77,7 @@ def edit(item_id):
         db.session.commit()
         flash(u'Dodano pozycję!', 'success')
         return redirect(url_for('item.detail', item_id=item_id))
-    form.itemType.data = item.itemType
+    form.itemtype.data = item.itemtype
     form.platform.data = item.platform
     form.title.data = item.title
     form.author.data = item.author
@@ -97,7 +97,7 @@ def add():
     form.amount.data = 3
     if form.validate_on_submit():
         new_item = Item(
-            itemType=form.itemType.data,
+            itemtype=form.itemtype.data,
             platform=form.platform.data,
             title=form.title.data,
             author=form.author.data,

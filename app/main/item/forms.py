@@ -8,7 +8,7 @@ from wtforms.validators import Length, DataRequired, Regexp
 
 
 class EditItemForm(FlaskForm):
-    itemType = StringField(u"Rodzaj",
+    itemtype = StringField(u"Rodzaj",
                        validators=[DataRequired(message=u"Proszę wypełnić to pole!"),
                                    Length(1, 128, message=u"Długość od 1 do 128 znaków.")])
     platform = StringField(u"Platforma",
