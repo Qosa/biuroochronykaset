@@ -20,10 +20,7 @@
             <th>Typ</th>
             <th>Nośnik</th>
             <th>Dostępność</th>
-            <th>Wypożyczone</th>
-            {% if current_user.is_authenticated %}
-                <th>Operacje</th>
-            {% endif %}
+            <th>Wypożyczenia ogółem</th>
         </tr>
         </thead>
         <tbody>
@@ -36,22 +33,6 @@
                 <td class="hidden-xs">{{ item.platform }}</td>
                 <td class="hidden-xs">{{ item.amount }} / {{ item.can_borrow_number() }}</td>
                 <td class="hidden-xs">{{ item.logs.count() }}</td>
-                {% if current_user.is_authenticated %}
-                    {% with log =current_user.borrowing(item) %}
-                        {% if log %}
-                            <td><a class="btn btn-primary"
-                                   href="{{ url_for('log.item_return',log_id=log.id,next=request.path) }}">
-                                Zwróć
-                            </a></td>
-                        {% else %}
-                            <td><a class="btn btn-success"
-                                   href="{{ url_for('log.item_borrow',item_id=item.id,next=request.path) }}"
-                                   {% if not item.can_borrow() %}disabled="disabled"{% endif %}>
-                                Wypożycz
-                            </a></td>
-                        {% endif %}
-                    {% endwith %}
-                {% endif %}
             </tr>
         {% endfor %}
         </tbody>

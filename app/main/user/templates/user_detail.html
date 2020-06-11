@@ -26,9 +26,6 @@
                 </h1>
 
                 <p>Email: {{ user.email }}</p>
-                {% if user.major %}
-                    <p>主修专业: {{ user.major }}</p>
-                {% endif %}
                 <p>Data dołączenia: {{ user.member_since.strftime('%d %B %Y - %H:%M:%S') }}</p>
                 {% if current_user.id==user.id or current_user.can(Permission.UPDATE_OTHERS_INFORMATION) %}
                     <a class="btn btn-info" href="{{ url_for('user.edit',user_id=user.id) }}">Edytuj</a>
@@ -52,7 +49,7 @@
 
 
     </div>
-
+    {%- if user.id != 1 -%}
     <div class="well well-lg" id="log">
         <ul class="nav nav-tabs" role="tablist">
             {% if request.args.get('show',0)!='1' %}
@@ -70,68 +67,76 @@
         <!-- Tab panes -->
         <div class="tab-content row">
             {% if request.args.get('show',0)!='1' %}
-                <table class="table table-striped table-hover">
-                    <thead>
-                    <tr>
-                        <th>Wypożyczenie</th>
-                        <th class="hidden-xs">Data wypożyczenia</th>
-                        <th class="hidden-xs">Data zwrotu</th>
-                        {%- if current_user.is_authenticated and current_user.id==user.id -%}
-                            <th>Operacje</th>
-                        {%- endif -%}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for log in logs %}
-                        <tr class="animated fadeIn delay-{{ loop.index0 }}">
-                            <td><a href="{{ url_for('item.detail',item_id=log.item.id) }}">{{ log.item.title }}</a>
-                                <p class="visible-xs-block">Data wypożyczenia:<span
-                                        class="line-wrap">{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
-                                </p>
-                                <p class="visible-xs-block">Data zwrotu:<span
-                                        class="line-wrap">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
-                                </p>
-                            </td>
-                            <td class="hidden-xs">{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
-                            <td class="hidden-xs">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                {%- if logs!=[] -%}
+                    <table class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>Wypożyczenie</th>
+                            <th class="hidden-xs">Data wypożyczenia</th>
+                            <th class="hidden-xs">Data zwrotu</th>
                             {%- if current_user.is_authenticated and current_user.id==user.id -%}
-                                <td><a class="btn btn-primary"
-                                       href="{{ url_for('log.item_return',log_id=log.id,next=request.path) }}">
-                                    Zwrot</a></td>
+                                <th>Operacje</th>
                             {%- endif -%}
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {% for log in logs %}
+                            <tr class="animated fadeIn delay-{{ loop.index0 }}">
+                                <td><a href="{{ url_for('item.detail',item_id=log.item.id) }}">{{ log.item.title }}</a>
+                                    <p class="visible-xs-block">Data wypożyczenia:<span
+                                            class="line-wrap">{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
+                                    </p>
+                                    <p class="visible-xs-block">Data zwrotu:<span
+                                            class="line-wrap">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
+                                    </p>
+                                </td>
+                                <td class="hidden-xs">{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                                <td class="hidden-xs">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                                {%- if current_user.is_authenticated and current_user.id==user.id -%}
+                                    <td><a class="btn btn-primary"
+                                        href="{{ url_for('log.item_return',log_id=log.id,next=request.path) }}">
+                                        Zwrot</a></td>
+                                {%- endif -%}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {%- else -%}
+                        <div class="container-fluid">Brak danych do wyświetlenia.</div>
+                {%- endif -%}                
             {% else %}
-                <table class="table table-striped table-hover">
-                    <thead>
-                    <tr>
-                        <th>Historia wypożyczeń</th>
-                        <th class="hidden-xs">Data wypożyczenia</th>
-                        <th class="hidden-xs">Data zwrotu</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for log in logs %}
-                        <tr class="animated fadeIn delay-{{ loop.index0 }}">
-                            <td><a href="{{ url_for('item.detail',item_id=log.item.id) }}">{{ log.item.title }}</a>
-                                <p class="visible-xs-block">
-                                    Data wypożyczenia:<span
-                                        class="line-wrap">{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
-                                </p>
-                                <p class="visible-xs-block">
-                                    Data zwrotu:<span
-                                        class="line-wrap">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
-                                </p>
-                            </td>
-                            <td class="hidden-xs">{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
-                            <td class="hidden-xs">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                {%- if logs!=[] -%}
+                    <table class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>Historia wypożyczeń</th>
+                            <th class="hidden-xs">Data wypożyczenia</th>
+                            <th class="hidden-xs">Data zwrotu</th>
                         </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-                </div>
+                        </thead>
+                        <tbody>
+                        {% for log in logs %}
+                            <tr class="animated fadeIn delay-{{ loop.index0 }}">
+                                <td><a href="{{ url_for('item.detail',item_id=log.item.id) }}">{{ log.item.title }}</a>
+                                    <p class="visible-xs-block">
+                                        Data wypożyczenia:<span
+                                            class="line-wrap">{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
+                                    </p>
+                                    <p class="visible-xs-block">
+                                        Data zwrotu:<span
+                                            class="line-wrap">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
+                                    </p>
+                                </td>
+                                <td class="hidden-xs">{{ log.borrow_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                                <td class="hidden-xs">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    </div>
+                {%- else -%}
+                        <div class="container-fluid">Brak danych do wyświetlenia.</div>
+                {%- endif -%}                
             {% endif %}
         {% if pagination and pagination.pages>1 %}
             <div class="container-fluid text-center">
@@ -139,6 +144,7 @@
             </div>
         {% endif %}
     </div>
+    {%- endif -%}
 {% endblock %}
 {% block scripts %}
     {{ super() }}

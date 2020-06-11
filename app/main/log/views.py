@@ -33,18 +33,17 @@ def item_return():
         the_log = Log.query.get(log_id)
         the_user = the_log.user_id
         the_item = the_log.item_id
-        print(the_user)
-        print(the_item)
     if the_item:
-        the_log = Log.query.filter_by(user_id=the_user, item_id=the_item).first()
-        print(the_log)
-    if log is None:
+        print(log_id)
+        the_log = Log.query.filter_by(user_id=the_user, item_id=the_item,returned=0).first()
+    if the_log is None:
         flash(u'Nie znaleziono wypożyczenia!', 'warning')
     else:
+        print(the_log.returned)
         result, message = current_user.return_item(the_log)
         flash(message, 'success' if result else 'danger')
         db.session.commit()
-    return redirect(request.args.get('next') or url_for('item.detail', item_id=log_id))
+    return redirect(request.args.get('next') or url_for('item.detail', item_id=item_id))
 
 
 @log.route('/')
@@ -56,6 +55,6 @@ def index():
 
     page = request.args.get('page', 1, type=int)
     pagination = Log.query.filter_by(returned=show).order_by(Log.borrow_timestamp.desc()).paginate(page, per_page=10)
-    print(Log.query.filter_by(returned=show).order_by(Log.borrow_timestamp.desc()))
+    print(pagination)
     logs = pagination.items
     return render_template("logs_info.html", logs=logs, pagination=pagination, title=u"Informacje o wypożyczeniach")

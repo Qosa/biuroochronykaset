@@ -75,18 +75,22 @@ class User(UserMixin, db.Model):
             return False, u"Nie można wypożyczyć,zaległe książki nie zostały zwrócone!"
         if self.borrowing(item):
             return False, u'Wygląda na to, że już wypożyczyłeś tą książkę!!'
-        if not item.can_borrow():
+        if not item.can_borrow(id,item.id):
             return False, u'Brak egzemplarzy do wypożyczenia!'
 
         db.session.add(Log(self, item))
         return True, u'Wypożyczono pomyślnie %s' % item.title
 
     def return_item(self, log):
-        if log.returned == 1 or log.user_id != self.id:
+        if log.returned == 1 or (self.id != 1 and log.user_id != self.id):
+            print(log.returned)
+            print(log.user_id)
+            print("user"+str(self.id))
             return False, u'Nie znaleziono takiego wypożyczenia!'
         log.returned = 1
         log.return_timestamp = datetime.now()
         db.session.add(log)
+        db.session.commit()
         return True, u'Zwrot zakończony pomyślnie  %s' % log.item.title
 
     def avatar_url(self, _external=False):
@@ -211,8 +215,12 @@ class Item(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def can_borrow(self):
-        return (not self.hidden) and self.can_borrow_number() > 0
+    def can_borrow(self,user_id,item_id):
+        if not self.hidden and self.can_borrow_number() > 0 and Cart.query.filter_by(user_id=user_id,item_id=item_id).first() == None and Log.query.filter_by(user_id=user_id,item_id=item_id,returned=0).first() == None:
+            return True
+        else:
+            return False    
+        #return ((not self.hidden) and self.can_borrow_number() > 0) or Cart.query.filter_by(user_id=user_id,item_id=item_id) != None
 
     def can_borrow_number(self):
         return self.amount - Log.query.filter_by(item_id=self.id, returned=0).count()
@@ -251,6 +259,34 @@ class Log(db.Model):
     def __repr__(self):
         return u'<%r - %r>' % (self.user.name, self.item.title)
 
+class Transaction(db.Model):
+    __tablename__ = 'transactions'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    items = db.Column(db.String(128))
+    total_cost = db.Column(db.Float)
+    payment_id = db.Column(db.Integer, db.ForeignKey('payments.id'))
+
+    def __init__(self,user_id,items,total_cost,payment_id):
+        self.user_id = user_id
+        self.items = items
+        self.total_cost = total_cost
+        self.payment_id = payment_id
+
+class Payment(db.Model):
+    __tablename__ = 'payments'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    total_cost = db.Column(db.Float)
+    cardholder = db.Column(db.String(128))
+    card_nbr = db.Column(db.String(128))
+
+    def __init__(self,user_id,total_cost,cardholder,card_nbr):
+        self.user_id = user_id
+        self.total_cost = total_cost
+        self.cardholder = cardholder
+        self.card_nbr = card_nbr
+
 class Cart(db.Model):
     __tablename__ = 'cart'
     id = db.Column(db.Integer, primary_key=True)
@@ -277,20 +313,3 @@ class Comment(db.Model):
         self.deleted = 0
 
 
-item_tag = db.Table('items_tags',
-                    db.Column('item_id', db.Integer, db.ForeignKey('items.id')),
-                    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'))
-                    )
-
-
-class Tag(db.Model):
-    __tablename__ = 'tags'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    items = db.relationship('Item',
-                            secondary=item_tag,
-                            backref=db.backref('tags', lazy='dynamic'),
-                            lazy='dynamic')
-
-    def __repr__(self):
-        return u'<Tag %s>' % self.name

@@ -16,9 +16,8 @@ avatars = UploadSet('avatars', IMAGES)
 configure_uploads(app, avatars)
 
 from app.main import main, auth, user, item, comment, log
-from app.api import api_bp
 
-for blueprint in [main, auth, user, item, comment, log, api_bp]:
+for blueprint in [main, auth, user, item, comment, log]:
     app.register_blueprint(blueprint)
 
 from app import models

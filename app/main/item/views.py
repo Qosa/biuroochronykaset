@@ -132,7 +132,7 @@ def put_back(item_id):
     the_item.hidden = 0
     db.session.add(the_item)
     db.session.commit()
-    flash(u'Pozycja odłożona.', 'info')
+    flash(u'Pozycja przywrócona.', 'info')
     return redirect(request.args.get('next') or url_for('item.detail', item_id=item_id))
 
 @item.route('/<int:item_id>/add_to_cart/')
@@ -143,11 +143,9 @@ def add_to_cart(item_id):
         user_id=current_user.id,
         item_id=item_id
     )
-    print(current_user.id)
-    print(item_id)
-    print(cart_item)
     db.session.add(cart_item)
     db.session.commit()    
     flash(u'Pozycja dodana do koszyka!', 'success')
     return redirect(url_for('item.index', item_id=item_id))
+    #return redirect(url_for('log.item_borrow',item_id=item_id))
 

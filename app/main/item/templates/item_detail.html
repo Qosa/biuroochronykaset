@@ -57,20 +57,15 @@
 
         <div class="btn-group">
             {%- if current_user.is_authenticated -%}
-                {%- with  log=current_user.borrowing(item) -%}
-                    {%- if log -%}
-                        <a class="btn btn-primary"
-                           href="{{ url_for('log.item_return',log_id=log.id,next=request.full_path ) }}">
-                            Wypożycz
-                        </a>
-                    {%- else -%}
-                        <a class="btn btn-success"
-                           href="{{ url_for('log.item_borrow',item_id=item.id,next=request.full_path) }}"
-                           {%- if not item.can_borrow() -%}disabled="disabled"{%- endif -%}>
-                            Zwróć
-                        </a>
-                    {%- endif -%}
-                {%- endwith -%}
+                {%- if not current_user.is_administrator() -%}
+                    <a class="btn btn-success"
+                        {%- if not item.can_borrow(current_user.id,item.id) %} 
+                            disabled="disabled"
+                        {%- else -%}
+                            href="{{ url_for('item.add_to_cart',item_id=item.id,next=request.full_path) }}"    
+                        {%- endif -%}>Dodaj do koszyka</a>
+                    </a>
+                {%- endif -%}
             {%- endif -%}
             {%- if current_user.can(Permission.UPDATE_ITEM_INFORMATION) -%}
                 <a type="button" class="btn btn-warning" href="{{ url_for('item.edit',item_id=item.id) }}">Edytuj
@@ -80,7 +75,7 @@
             {%- if item.hidden -%}
                 {%- if current_user.is_administrator() -%}
                     <a type="button" class="btn btn-info"
-                       href="{{ url_for('item.put_back',item_id=item.id) }}">Ukryj</a>
+                       href="{{ url_for('item.put_back',item_id=item.id) }}">Przywróć</a>
                 {%- endif -%}
             {%- else -%}
                 {%- if current_user.can(Permission.DELETE_ITEM) -%}

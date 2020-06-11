@@ -17,7 +17,7 @@ def login():
             flash(u'%s - Logowanie zakończone sukcesem!' % the_user.name, 'success')
             return redirect(request.args.get('next') or url_for('main.index'))
         flash(u'Niepoprawne dane logowania!', 'danger')
-    return render_template("login.html", form=login_form, title=u"登入")
+    return render_template("login.html", form=login_form, title=u"Logowanie")
 
 
 @auth.route('/logout/')

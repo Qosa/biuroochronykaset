@@ -11,7 +11,7 @@ def inject_permissions():
     return dict(Permission=Permission)
 
 
-@main.route('/')
+@main.route('/',methods=['GET', 'POST'])
 def index():
     search_form = SearchForm()
     the_items = Item.query

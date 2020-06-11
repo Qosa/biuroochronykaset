@@ -19,7 +19,7 @@
                 <tr>
                     <th>Użytkownik</th>
                     <th>Email</th>
-                    <th>Wypożyczone książki</th>
+                    <th>Tytuł</th>
                     <th>Data wypożyczenia</th>
                     <th>Przewidywana data zwrotu</th>
                     {%- if current_user.is_authenticated -%}
@@ -39,15 +39,11 @@
                             <p class="visible-xs-block">Przewidywana data zwrotu: <span
                                     class="line-wrap">{{ log.return_timestamp.strftime('%d %B %Y - %H:%M:%S') }}</span>
                             </p>
-                            {%- if current_user.is_authenticated -%}
-                                {% if current_user.id == log.user.id %}
+                            {%- if current_user.is_administrator() -%}
                                     <a class="btn btn-primary visible-xs-block"
                                        href="{{ url_for('log.item_return',log_id=log.id,next=request.path) }}">
                                         Zwrot
                                     </a>
-                                {% else %}
-                                    <button class="btn btn-warning visible-xs-block btn-block" disabled>Zwróć</button>
-                                {% endif %}
                             {%- endif -%}
                         </td>
                         <td class="hidden-xs">{{ log.user.email }}</td>

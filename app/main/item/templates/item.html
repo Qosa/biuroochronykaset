@@ -24,7 +24,7 @@
             <th class="hidden-xs">Typ</th>
             <th class="hidden-xs">Nośnik</th>
             <th class="hidden-xs">Dostępność</th>
-            <th class="hidden-xs">Wypożyczone</th>
+            <th class="hidden-xs">Wypożyczenia ogółem</th>
             {%- if current_user.is_authenticated -%}
                 <th>Operacje</th>
             {%- endif -%}
@@ -44,22 +44,18 @@
                 <td class="hidden-xs">{{ item.logs.count() }}</td>
                 {%- if current_user.is_authenticated -%}
                     <td>
-                        {% with borrowing_log=current_user.borrowing(item) %}
-                            {%- if borrowing_log -%}
-                                <a class="btn btn-primary"
-                                   href="{{ url_for('log.item_return',log_id=borrowing_log.id,next=request.full_path) }}">Zwróć</a>
-                            {%- else -%}
-                               <!-- <a class="btn btn-success"
-                                    href="{{ url_for('log.item_borrow',item_id=item.id,next=request.full_path) }}" -->
-                                    <a class="btn btn-success"
-                                    href="{{ url_for('item.add_to_cart',item_id=item.id,next=request.full_path) }}"
-                                        {%- if not item.can_borrow() %} disabled="disabled"{%- endif -%}>Wypożycz</a>
-                            {%- endif -%}
-                        {% endwith %}
+                        {%- if not current_user.is_administrator() -%}
+                            <a class="btn btn-success"
+                                        {%- if not item.can_borrow(current_user.id,item.id) %} 
+                                            disabled="disabled"
+                                        {%- else -%}
+                                            href="{{ url_for('item.add_to_cart',item_id=item.id,next=request.full_path) }}"    
+                                        {%- endif -%}>Dodaj do koszyka</a>
+                        {%- endif -%}
                         {% if item.hidden %}
                             {%- if current_user.is_administrator() -%}
                                 <a type="button" class="btn btn-info"
-                                   href="{{ url_for('item.put_back',item_id=item.id,next=request.full_path) }}">Ukryj</a>
+                                   href="{{ url_for('item.put_back',item_id=item.id,next=request.full_path) }}">Przywróć</a>
                             {%- endif -%}
                         {% else %}
                             {%- if current_user.can(Permission.DELETE_ITEM) -%}
