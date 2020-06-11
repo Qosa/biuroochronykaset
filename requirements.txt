@@ -10,6 +10,8 @@ Flask-RESTful==0.3.7
 Flask-SQLAlchemy==2.4.0
 Flask-Uploads==0.2.1
 Flask-WTF==0.14.2
+Flask-Script==2.0.6
+Flask-Migrate==2.5.3
 html5lib==1.0.1
 gunicorn==19.9.0
 psycopg2==2.8.5
